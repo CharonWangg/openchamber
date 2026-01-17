@@ -12,6 +12,7 @@ import { useMenuActions } from '@/hooks/useMenuActions';
 import { useMessageSync } from '@/hooks/useMessageSync';
 import { useSessionStatusBootstrap } from '@/hooks/useSessionStatusBootstrap';
 import { useSessionAutoCleanup } from '@/hooks/useSessionAutoCleanup';
+import { useChangeSummary } from '@/hooks/useChangeSummary';
 import { GitPollingProvider } from '@/hooks/useGitPolling';
 import { useConfigStore } from '@/stores/useConfigStore';
 import { hasModifier } from '@/lib/utils';
@@ -168,6 +169,10 @@ function App({ apis }: AppProps) {
 
   useSessionStatusBootstrap();
   useSessionAutoCleanup();
+
+  // Auto-collect file changes after assistant messages
+  const currentSessionId = useSessionStore((state) => state.currentSessionId);
+  useChangeSummary(currentSessionId, currentDirectory);
 
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
