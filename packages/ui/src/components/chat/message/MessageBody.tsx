@@ -7,6 +7,7 @@ import ReasoningPart from './parts/ReasoningPart';
 import ToolPart from './parts/ToolPart';
 import ProgressiveGroup from './parts/ProgressiveGroup';
 import MigratingPart from './parts/MigratingPart';
+import ChangeSummaryPart from './parts/ChangeSummaryPart';
 import { MessageFilesDisplay } from '../FileAttachment';
 import type { ToolPart as ToolPartType } from '@opencode-ai/sdk/v2';
 import type { StreamPhase, ToolPopupContent, AgentMentionInfo } from './types';
@@ -383,6 +384,10 @@ const AssistantMessageBody: React.FC<Omit<MessageBodyProps, 'isUser'>> = ({
 
     const assistantTextParts = React.useMemo(() => {
         return visibleParts.filter((part) => part.type === 'text');
+    }, [visibleParts]);
+
+    const changeSummaryParts = React.useMemo(() => {
+        return visibleParts.filter((part) => part.type === 'change_summary');
     }, [visibleParts]);
 
     const createSessionFromAssistantMessage = useSessionStore((state) => state.createSessionFromAssistantMessage);
@@ -1248,6 +1253,15 @@ const AssistantMessageBody: React.FC<Omit<MessageBodyProps, 'isUser'>> = ({
                             </div>
                         </FadeInOnReveal>
                     )}
+                    {changeSummaryParts.length > 0 && changeSummaryParts.map((part, index) => (
+                        <FadeInOnReveal key={`change-summary-${part.id || index}`}>
+                            <ChangeSummaryPart
+                                part={part as never}
+                                messageId={messageId}
+                                onContentChange={onContentChange}
+                            />
+                        </FadeInOnReveal>
+                    ))}
                 </div>
                 <MessageFilesDisplay files={parts} onShowPopup={onShowPopup} />
                 {!showSummaryBody && shouldShowFooter && (
